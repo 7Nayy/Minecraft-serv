@@ -26,6 +26,8 @@ spec:
           value: "PAPER" # Pour les performances
         - name: MEMORY
           value: "10G"
+        - name: CREATE_CONSOLE_IN_PIPE # <--- Ajoute cette ligne
+          value: "true"
         volumeMounts:
         - name: mc-data
           mountPath: /data
