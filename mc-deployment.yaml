@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minecraft-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minecraft
+  template:
+    metadata:
+      labels:
+        app: minecraft
+    spec:
+      containers:
+      - name: minecraft
+        image: itzg/minecraft-server
+        ports:
+        - containerPort: 25565
+        env:
+        - name: EULA
+          value: "TRUE"
+        - name: TYPE
+          value: "PAPER" # Pour les performances
+        - name: MEMORY
+          value: "10G"
+        volumeMounts:
+        - name: mc-data
+          mountPath: /data
+      volumes:
+      - name: mc-data
+        persistentVolumeClaim:
+          claimName: minecraft-pvc
