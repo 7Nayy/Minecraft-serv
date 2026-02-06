@@ -1,0 +1,30 @@
+name: Deploy Minecraft to Kubernetes
+
+on:
+  push:
+    branches:
+      - main  # Se déclenche quand tu pousses sur la branche main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Kubectl
+        uses: azure/k8s-set-context@v3
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Deploy Manifests
+        run: |
+          kubectl apply -f mc-pvc.yaml
+          kubectl apply -f mc-deployment.yaml
+          kubectl apply -f mc-service.yaml
+          
+      - name: Force Refresh
+        run: |
+          # Force le redémarrage pour appliquer les changements de config (ex: ONLINE_MODE)
+          kubectl rollout restart deployment/minecraft-server
